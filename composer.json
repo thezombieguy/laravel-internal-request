@@ -12,7 +12,8 @@
     "require": {
         "php": "^8.0",
         "illuminate/support": "^9.0|^10.0",
-        "illuminate/http": "^9.0|^10.0"
+        "illuminate/http": "^9.0|^10.0",
+        "fakerphp/faker": "^1.9.1"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
@@ -45,5 +46,5 @@
         "test": "phpunit"
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": false
 }

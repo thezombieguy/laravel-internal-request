@@ -9,9 +9,36 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Request as RequestFacade;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use thezombieguy\InternalRequest\Exceptions\RouteNotFoundInternalRequestException;
 
 class InternalRequestService
 {
+    /**
+     * @var callable
+     */
+    protected $beforeRequest;
+
+    /**
+     * @var callable
+     */
+    protected $afterRequest;
+
+    public function setBeforeRequest(callable $callback): self
+    {
+        $this->beforeRequest = $callback;
+        return $this;
+    }
+
+    public function setAfterRequest(callable $callback): self
+    {
+        $this->afterRequest = $callback;
+        return $this;
+    }
+
+    /**
+     * @throws RouteNotFoundInternalRequestException
+     */
     public function request(
         string $routeName,
         string $method = 'GET',
@@ -20,22 +47,23 @@ class InternalRequestService
         array $headers = [],
     ): Response
     {
-        $url = \route($routeName, $urlParams);
+        $request = $this->buildRequest($routeName, $method, $urlParams, $queryParams, $headers);
+        // configure this to be enabled only if you want.
+//        $originalRequest = \request();
+//        App::instance('request', $request);
 
-        $request = RequestFacade::create($url, $method, $queryParams);
-
-        foreach ($headers as $key => $value) {
-            $request->headers->set($key, $value);
+        if ($this->beforeRequest) {
+            \call_user_func($this->beforeRequest);
         }
-
-        $originalRequest = \request(); // Store the original request
-        App::instance('request', $request); // Override the request instance in the container
 
         try {
             return $this->call($request);
         } finally {
             // Restore the original request instance
-            App::instance('request', $originalRequest);
+            if ($this->afterRequest) {
+                \call_user_func($this->afterRequest);
+            }
+//            App::instance('request', $originalRequest);
         }
     }
 
@@ -48,5 +76,28 @@ class InternalRequestService
         }
 
         return $response;
+    }
+
+    /**
+     * @throws RouteNotFoundInternalRequestException
+     */
+    protected function buildRequest($routeName, $method, $urlParams, $queryParams, $headers): Request
+    {
+        try {
+            $url = \route($routeName, $urlParams);
+        } catch (RouteNotFoundException $e) {
+            throw new RouteNotFoundInternalRequestException($routeName);
+        }
+
+        /**
+         * @var Request $request
+         */
+        $request = RequestFacade::create($url, $method, $queryParams);
+
+        foreach ($headers as $key => $value) {
+            $request->headers->set($key, $value);
+        }
+
+        return $request;
     }
 }
