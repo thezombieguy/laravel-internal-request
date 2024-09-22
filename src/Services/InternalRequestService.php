@@ -80,7 +80,7 @@ class InternalRequestService
     {
         try {
             $url = \route($routeName, $urlParams);
-        } catch (RouteNotFoundException $e) {
+        } catch (RouteNotFoundException) {
             throw new RouteNotFoundInternalRequestException($routeName);
         }
 
