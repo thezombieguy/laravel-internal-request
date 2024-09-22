@@ -8,6 +8,7 @@ use Faker\Factory;
 use Faker\Generator;
 use Illuminate\Support\Facades\Log;
 use Orchestra\Testbench\TestCase;
+use thezombieguy\InternalRequest\Exceptions\RouteNotFoundInternalRequestException;
 use thezombieguy\InternalRequest\InternalRequestServiceProvider;
 use thezombieguy\InternalRequest\Services\InternalRequestService;
 use Illuminate\Support\Facades\Route;
@@ -19,7 +20,6 @@ class InternalRequestServiceTest extends TestCase
 
     protected function getPackageProviders($app): array
     {
-        // If you have a service provider, add it here
         return [
             InternalRequestServiceProvider::class,
         ];
@@ -42,6 +42,7 @@ class InternalRequestServiceTest extends TestCase
 
     /**
      * @throws \JsonException
+     * @throws RouteNotFoundInternalRequestException
      */
     public function testInternalRequestWithParams(): void
     {
@@ -69,7 +70,7 @@ class InternalRequestServiceTest extends TestCase
         $this->assertEquals($queryParams['foo'], $responseData['query']['foo']);
     }
 
-    public function testInternalRequestWilCallbacks(): void
+    public function testInternalRequestWithCallbacks(): void
     {
         $service = new InternalRequestService();
 
@@ -100,5 +101,20 @@ class InternalRequestServiceTest extends TestCase
         $this->assertTrue($afterCalled);
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
+    public function testThrowsCustomExceptionForNonExistentRoute() :void
+    {
+        // Create the service instance
+        $service = new InternalRequestService();
+
+        // Expect the custom exception to be thrown
+        $this->expectException(RouteNotFoundInternalRequestException::class);
+
+        // Optionally, you can assert the exception message or context
+        $this->expectExceptionMessage("The route 'non.existent.route' could not be found");
+
+        // Call the request method with a non-existent route
+        $service->request('non.existent.route', 'GET');
     }
 }

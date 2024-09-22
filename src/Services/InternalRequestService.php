@@ -48,9 +48,6 @@ class InternalRequestService
     ): Response
     {
         $request = $this->buildRequest($routeName, $method, $urlParams, $queryParams, $headers);
-        // configure this to be enabled only if you want.
-//        $originalRequest = \request();
-//        App::instance('request', $request);
 
         if ($this->beforeRequest) {
             \call_user_func($this->beforeRequest);
@@ -59,11 +56,9 @@ class InternalRequestService
         try {
             return $this->call($request);
         } finally {
-            // Restore the original request instance
             if ($this->afterRequest) {
                 \call_user_func($this->afterRequest);
             }
-//            App::instance('request', $originalRequest);
         }
     }
 
