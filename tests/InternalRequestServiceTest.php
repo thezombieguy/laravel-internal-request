@@ -6,13 +6,12 @@ namespace thezombieguy\InternalRequest\Tests;
 
 use Faker\Factory;
 use Faker\Generator;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Route;
 use Orchestra\Testbench\TestCase;
+use Symfony\Component\HttpFoundation\Response;
 use thezombieguy\InternalRequest\Exceptions\RouteNotFoundInternalRequestException;
 use thezombieguy\InternalRequest\InternalRequestServiceProvider;
 use thezombieguy\InternalRequest\Services\InternalRequestService;
-use Illuminate\Support\Facades\Route;
-use Symfony\Component\HttpFoundation\Response;
 
 class InternalRequestServiceTest extends TestCase
 {
@@ -35,7 +34,7 @@ class InternalRequestServiceTest extends TestCase
             return \response()->json([
                 'message' => 'Success',
                 'id' => $id,
-                'query' => \request()->query()
+                'query' => \request()->query(),
             ]);
         })->name('test.route');
     }
@@ -103,7 +102,7 @@ class InternalRequestServiceTest extends TestCase
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 
-    public function testThrowsCustomExceptionForNonExistentRoute() :void
+    public function testThrowsCustomExceptionForNonExistentRoute(): void
     {
         // Create the service instance
         $service = new InternalRequestService();

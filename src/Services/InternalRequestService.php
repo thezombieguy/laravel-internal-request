@@ -27,12 +27,14 @@ class InternalRequestService
     public function setBeforeRequest(callable $callback): self
     {
         $this->beforeRequest = $callback;
+
         return $this;
     }
 
     public function setAfterRequest(callable $callback): self
     {
         $this->afterRequest = $callback;
+
         return $this;
     }
 
@@ -44,9 +46,8 @@ class InternalRequestService
         string $method = 'GET',
         array $urlParams = [],
         array $queryParams = [],
-        array $headers = [],
-    ): Response
-    {
+        array $headers = ['content-type' => 'application/json'],
+    ): Response {
         $request = $this->buildRequest($routeName, $method, $urlParams, $queryParams, $headers);
 
         if ($this->beforeRequest) {
@@ -76,8 +77,13 @@ class InternalRequestService
     /**
      * @throws RouteNotFoundInternalRequestException
      */
-    protected function buildRequest($routeName, $method, $urlParams, $queryParams, $headers): Request
-    {
+    protected function buildRequest(
+        string $routeName,
+        string $method,
+        array $urlParams,
+        array $queryParams,
+        array $headers
+    ): Request {
         try {
             $url = \route($routeName, $urlParams);
         } catch (RouteNotFoundException) {
