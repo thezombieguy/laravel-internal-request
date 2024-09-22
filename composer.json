@@ -44,8 +44,6 @@
         }
     },
     "scripts": {
-        "test": "phpunit",
-        "test-coverage": "phpunit --coverage-html coverage",
         "lint": "phpcs",
         "fix": "php-cs-fixer fix",
         "analyse": "phpstan analyse"
