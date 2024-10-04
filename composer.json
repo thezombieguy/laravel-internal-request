@@ -5,8 +5,9 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Your Name",
-            "email": "your-email@example.com"
+            "name": "Bryan Trudel",
+            "email": "prime@bevil.ca",
+            "homepage": "https://bevil.ca"
         }
     ],
     "require": {

@@ -63,7 +63,7 @@ class InternalRequestService
         }
     }
 
-    protected function call(Request $request): Response
+    private function call(Request $request): Response
     {
         $response = App::handle($request);
 
