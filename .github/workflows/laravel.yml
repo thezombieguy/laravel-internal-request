@@ -24,7 +24,7 @@ jobs:
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
       
     - name: Run PHPUnit tests
-      run: vendor/bin/phpunit --coverage-text
+      run: vendor/bin/phpunit
 
     - name: Run PHPStan
       run: vendor/bin/phpstan analyse
