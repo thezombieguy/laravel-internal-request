@@ -15,12 +15,12 @@ use TheZombieGuy\InternalRequest\Exceptions\RouteNotFoundInternalRequestExceptio
 final class InternalRequestService
 {
     /**
-     * @var callable
+     * @var callable|null
      */
     protected $beforeRequest;
 
     /**
-     * @var callable
+     * @var callable|null
      */
     protected $afterRequest;
 
@@ -39,6 +39,9 @@ final class InternalRequestService
     }
 
     /**
+     * @param array<string, string> $urlParams
+     * @param array<string, string> $queryParams
+     * @param array<string, string> $headers
      * @throws RouteNotFoundInternalRequestException
      */
     public function request(
@@ -68,13 +71,16 @@ final class InternalRequestService
         $response = App::handle($request);
 
         if ($response->getStatusCode() !== Response::HTTP_OK) {
-            throw new HttpException($response->getStatusCode(), $response->getContent());
+            throw new HttpException($response->getStatusCode(), (string) $response->getContent());
         }
 
         return $response;
     }
 
     /**
+     * @param array<string, string> $urlParams
+     * @param array<string, string> $queryParams
+     * @param array<string, string> $headers
      * @throws RouteNotFoundInternalRequestException
      */
     private function buildRequest(

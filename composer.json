@@ -43,7 +43,7 @@
     "scripts": {
         "lint": "phpcs",
         "fix": "php-cs-fixer fix",
-        "analyse": "phpstan analyse",
+        "analyse": "phpstan analyse --level 9",
         "test": "phpunit tests"
     },
     "minimum-stability": "stable",
