@@ -1,6 +1,13 @@
 # Laravel Internal Request
 **Easily request data from internal routes within your Laravel application without making external HTTP calls.**
 
+![Tests](https://github.com/thezombieguy/laravel-internal-request/actions/workflows/ci.yml/badge.svg)
+![PHP Version](https://img.shields.io/badge/php-%5E8.1-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Downloads](https://img.shields.io/packagist/dt/thezombieguy/laravel-internal-request)
+
+
+
 Sometimes, it's easier and more efficient to request data from an existing internal route rather than making an external HTTP call back to your application. This package provides a clean and simple interface to make internal route requests, saving overhead and improving performance.
 
 ## Requirements
