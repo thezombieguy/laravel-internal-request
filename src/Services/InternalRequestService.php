@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use TheZombieGuy\InternalRequest\Exceptions\RouteNotFoundInternalRequestException;
 
-class InternalRequestService
+final class InternalRequestService
 {
     /**
      * @var callable
@@ -77,7 +77,7 @@ class InternalRequestService
     /**
      * @throws RouteNotFoundInternalRequestException
      */
-    protected function buildRequest(
+    private function buildRequest(
         string $routeName,
         string $method,
         array $urlParams,

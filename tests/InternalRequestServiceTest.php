@@ -10,19 +10,11 @@ use Illuminate\Support\Facades\Route;
 use Orchestra\Testbench\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 use TheZombieGuy\InternalRequest\Exceptions\RouteNotFoundInternalRequestException;
-use TheZombieGuy\InternalRequest\InternalRequestServiceProvider;
 use TheZombieGuy\InternalRequest\Services\InternalRequestService;
 
 class InternalRequestServiceTest extends TestCase
 {
     protected Generator $faker;
-
-    protected function getPackageProviders($app): array
-    {
-        return [
-            InternalRequestServiceProvider::class,
-        ];
-    }
 
     public function setUp(): void
     {

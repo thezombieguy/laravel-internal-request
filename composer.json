@@ -36,13 +36,6 @@
             "TheZombieGuy\\InternalRequest\\Tests\\": "tests/"
         }
     },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "TheZombieGuy\\InternalRequest\\InternalRequestServiceProvider"
-            ]
-        }
-    },
     "scripts": {
         "lint": "phpcs",
         "fix": "php-cs-fixer fix",
