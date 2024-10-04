@@ -10,7 +10,7 @@ Sometimes, it's easier to request data from an existing route internally rather 
 ## Installation
 
 ```bash 
-composer require thezombieguy/laravel-internal-request
+composer require TheZombieGuy/laravel-internal-request
 ```
 
 ## Usage

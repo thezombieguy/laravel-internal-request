@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace thezombieguy\InternalRequest\Services;
+namespace TheZombieGuy\InternalRequest\Services;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Request as RequestFacade;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
-use thezombieguy\InternalRequest\Exceptions\RouteNotFoundInternalRequestException;
+use TheZombieGuy\InternalRequest\Exceptions\RouteNotFoundInternalRequestException;
 
 class InternalRequestService
 {

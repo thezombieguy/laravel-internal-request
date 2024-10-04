@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace thezombieguy\InternalRequest;
+namespace TheZombieGuy\InternalRequest;
 
 use Illuminate\Support\ServiceProvider;
 

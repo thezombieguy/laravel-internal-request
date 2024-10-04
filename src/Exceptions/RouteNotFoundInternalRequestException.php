@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace thezombieguy\InternalRequest\Exceptions;
+namespace TheZombieGuy\InternalRequest\Exceptions;
 
 use Exception;
 

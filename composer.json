@@ -7,48 +7,48 @@
         {
             "name": "Bryan Trudel",
             "email": "prime@bevil.ca",
-            "homepage": "https://bevil.ca"
+            "homepage": "https://bevil.ca",
+            "role": "Principal Engineer / Dark Lord"
         }
     ],
     "require": {
         "php": "^8.0",
         "illuminate/support": "^9.0|^10.0",
-        "illuminate/http": "^9.0|^10.0",
-        "fakerphp/faker": "^1.9.1"
+        "illuminate/http": "^9.0|^10.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
         "phpunit/phpunit": "^9.5",
         "orchestra/testbench": "^7.0",
-        "phpstan/phpstan": "1.12.x-dev",
-        "friendsofphp/php-cs-fixer": "dev-master",
+        "phpstan/phpstan": "^1.12",
+        "friendsofphp/php-cs-fixer": "^3.0",
         "mockery/mockery": "^1.4",
         "spatie/phpunit-watcher": "^1.0",
-        "nunomaduro/collision": "^6.0",
-        "squizlabs/php_codesniffer": "4.0.x-dev"
+        "squizlabs/php_codesniffer": "^3.7"
     },
     "autoload": {
         "psr-4": {
-            "thezombieguy\\InternalRequest\\": "src/"
+            "TheZombieGuy\\InternalRequest\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "thezombieguy\\InternalRequest\\Tests\\": "tests/"
+            "TheZombieGuy\\InternalRequest\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "thezombieguy\\InternalRequest\\InternalRequestServiceProvider"
+                "TheZombieGuy\\InternalRequest\\InternalRequestServiceProvider"
             ]
         }
     },
     "scripts": {
         "lint": "phpcs",
         "fix": "php-cs-fixer fix",
-        "analyse": "phpstan analyse"
+        "analyse": "phpstan analyse",
+        "test": "phpunit tests"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": false
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }

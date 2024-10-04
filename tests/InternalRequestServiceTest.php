@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace thezombieguy\InternalRequest\Tests;
+namespace TheZombieGuy\InternalRequest\Tests;
 
 use Faker\Factory;
 use Faker\Generator;
 use Illuminate\Support\Facades\Route;
 use Orchestra\Testbench\TestCase;
 use Symfony\Component\HttpFoundation\Response;
-use thezombieguy\InternalRequest\Exceptions\RouteNotFoundInternalRequestException;
-use thezombieguy\InternalRequest\InternalRequestServiceProvider;
-use thezombieguy\InternalRequest\Services\InternalRequestService;
+use TheZombieGuy\InternalRequest\Exceptions\RouteNotFoundInternalRequestException;
+use TheZombieGuy\InternalRequest\InternalRequestServiceProvider;
+use TheZombieGuy\InternalRequest\Services\InternalRequestService;
 
 class InternalRequestServiceTest extends TestCase
 {
