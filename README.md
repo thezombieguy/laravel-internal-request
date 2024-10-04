@@ -1,27 +1,32 @@
 # Laravel Internal Request
+**Easily request data from internal routes within your Laravel application without making external HTTP calls.**
 
-Sometimes, it's easier to request data from an existing route internally rather than make an external http call back to your application. this package allows just that.**
+Sometimes, it's easier and more efficient to request data from an existing internal route rather than making an external HTTP call back to your application. This package provides a clean and simple interface to make internal route requests, saving overhead and improving performance.
 
 ## Requirements
 
-- PHP >= 8.0
-- Laravel 9.x or 10.x
+- PHP >= 8.1
+- Laravel 10.x or 11.x
 
 ## Installation
 
+You can install this package via Composer. It's recommended for scenarios where you want to avoid external HTTP calls and instead make requests to your own application internally.
+
 ```bash 
-composer require TheZombieGuy/laravel-internal-request
+composer require thezombieguy/laravel-internal-request
 ```
 
 ## Usage
 
-It's simple to use. First, instantiate the internal request service:
+To use the internal request service, resolve it from the Laravel service container:
 
 ```php
-$service = new InternalRequestService();
+use TheZombieGuy\InternalRequest\Services\InternalRequestService;
+
+$service = app(InternalRequestService::class);
 ```
 
-To call an internal route, use the request() method:
+To call an internal route, use the $service->request() method:
 
 ```php
 $response = $service->request('valid.route.name');
@@ -33,7 +38,9 @@ By default, the service will send a get request to the internal route and return
 You can also pass HTTP methods, query parameters, URL parameters, and additional headers. Let's assume you have a route called `test.route` with the URL structure `/test/{id}`:
 
 ```php
-$service = new InternalRequestService();
+use TheZombieGuy\InternalRequest\Services\InternalRequestService;
+
+$service = app(InternalRequestService::class);
 
 $urlParams = ['id' => 123];
 $queryParams = ['foo' => 'bar'];
@@ -48,13 +55,15 @@ $response = $service->request(
 );
 ```
 
-This will call the route `/test/123` with the url params and headers appropriately passed into the request.
+This will call the route `/test/123` with the url params and headers.
 
 ## Hooking Into the Request Lifecycle
 
-You can hook into actions before and after the request to execute custom logic. For example, if you're calling the internal route from a Livewire component, you'll want to avoid altering the original request object. 
+You can hook into the request lifecycle to execute custom logic before or after the internal request is made. This is useful when calling the internal route from services like Livewire, where you may need to avoid altering the original request object.
 
-In your AppServiceProvider or another service provider, you can bind the afterRequest to the service instance:
+### Example: Resetting Request State
+
+In your `AppServiceProvider`, you can bind the `afterRequest` callback to restore the original request object after making an internal request:
 ```php
 class AppServiceProvider extends ServiceProvider
 {
@@ -79,11 +88,12 @@ class AppServiceProvider extends ServiceProvider
 And then just call your service in the code wherever you require.
 
 ```php
+use TheZombieGuy\InternalRequest\Services\InternalRequestService;
+
 $service = \app(InternalRequestService::class);
 $response = $service->request('your.route');
 ```
-This example makes the internal request and, once the response is returned, restores the request object to its original state. You can also use `setBeforeRequest()` to execute code before the request is made. 
-
+The `setAfterRequest()` hook will restore the original request after the internal request has been completed. You can also use `setBeforeRequest()` to define logic that should execute before the internal request.
 ## License
 
-This package is open-source software licensed under the MIT License.
+This package is open-source software licensed under the [MIT License](LICENSE.md).
