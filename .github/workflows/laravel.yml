@@ -27,7 +27,7 @@ jobs:
       run: vendor/bin/phpunit tests
 
     - name: Run PHPStan
-      run: vendor/bin/phpstan analyse  --level 9
+      run: vendor/bin/phpstan analyse  --level 9 src
 
     - name: Run PHP CS Fixer
       run: vendor/bin/php-cs-fixer fix --dry-run --diff
