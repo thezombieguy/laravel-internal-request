@@ -41,9 +41,9 @@ final class InternalRequestService
 
     /**
      * @param array<string, string> $urlParams
-     * @param array<string, string> $queryParams
-     * @param array<string, mixed> $headers
-     * @param array<string, mixed> $bodyParams
+     * @param array<string, array<string>|string|null> $queryParams
+     * @param array<string, array<string>|string|null> $headers
+     * @param array<string, array<string>|string|null> $bodyParams
      * @throws RouteNotFoundInternalRequestException
      */
     public function request(
@@ -84,9 +84,9 @@ final class InternalRequestService
 
     /**
      * @param array<string, string> $urlParams
-     * @param array<string, string> $queryParams
-     * @param array<string, mixed> $headers
-     * @param array<string, mixed> $bodyParams
+     * @param array<string, array<string>|string|null> $queryParams
+     * @param array<string, array<string>|string|null> $headers
+     * @param array<string, array<string>|string|null> $bodyParams
      * @throws RouteNotFoundInternalRequestException
      */
     private function buildRequest(
