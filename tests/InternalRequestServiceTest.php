@@ -29,6 +29,14 @@ class InternalRequestServiceTest extends TestCase
                 'query' => \request()->query(),
             ]);
         })->name('test.route');
+
+        Route::post('test/{id}', static function ($id) {
+            return \response()->json([
+                'message' => 'Created',
+                'id' => $id,
+                'input' => \request()->input(),
+            ]);
+        })->name('test.post.route');
     }
 
     /**
@@ -59,6 +67,38 @@ class InternalRequestServiceTest extends TestCase
         $this->assertEquals('Success', $responseData['message']);
         $this->assertEquals($urlParams['id'], $responseData['id']);
         $this->assertEquals($queryParams['foo'], $responseData['query']['foo']);
+    }
+
+    /**
+     * @throws \JsonException
+     * @throws RouteNotFoundInternalRequestException
+     */
+    public function testPostToInternalRequestWithParams(): void
+    {
+        $service = new InternalRequestService();
+
+        $urlParams = ['id' => $this->faker->uuid];
+        $queryParams = ['foo' => $this->faker->word];
+        $headers = ['x-test-header' => $this->faker->word];
+        $bodyParams = ['bar' => $this->faker->word];
+
+        $response = $service->request(
+            'test.post.route',
+            'POST',
+            $urlParams,
+            $queryParams,
+            $headers,
+            $bodyParams,
+        );
+
+        // Decode the JSON response
+        $responseData = \json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        // Assertions to check if the route was loaded correctly
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertEquals('Created', $responseData['message']);
+        $this->assertEquals($urlParams['id'], $responseData['id']);
+        $this->assertEquals($bodyParams['bar'], $responseData['input']['bar']);
     }
 
     public function testInternalRequestWithCallbacks(): void
