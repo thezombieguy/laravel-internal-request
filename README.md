@@ -58,7 +58,8 @@ $response = $service->request(
     'GET',
     $urlParams,
     $queryParams,
-    $headers
+    $headers,
+    $bodyParams, // for post put or update methods
 );
 ```
 
@@ -101,6 +102,16 @@ $service = \app(InternalRequestService::class);
 $response = $service->request('your.route');
 ```
 The `setAfterRequest()` hook will restore the original request after the internal request has been completed. You can also use `setBeforeRequest()` to define logic that should execute before the internal request.
+
+### Lifecycle Events
+
+When executing the before and after request hooks, the service will dispatch the following events:
+- internal_request.before
+- internal_request.after
+
+You can listen to these events in your application to execute custom logic before or after the internal request is made.
+
+```php
 ## License
 
 This package is open-source software licensed under the [MIT License](LICENSE.md).

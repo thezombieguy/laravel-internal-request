@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace TheZombieGuy\InternalRequest\Services;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Request as RequestFacade;
+use Illuminate\Support\Facades\Event;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -15,14 +15,15 @@ use TheZombieGuy\InternalRequest\Exceptions\RouteNotFoundInternalRequestExceptio
 final class InternalRequestService
 {
     /**
-     * @var callable|null
+     * @param callable|null $beforeRequest
+     * @param callable|null $afterRequest
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
      */
-    protected $beforeRequest;
-
-    /**
-     * @var callable|null
-     */
-    protected $afterRequest;
+    public function __construct(
+        protected $beforeRequest = null,
+        protected $afterRequest = null
+    ) {
+    }
 
     public function setBeforeRequest(callable $callback): self
     {
@@ -40,8 +41,9 @@ final class InternalRequestService
 
     /**
      * @param array<string, string> $urlParams
-     * @param array<string, string> $queryParams
-     * @param array<string, string> $headers
+     * @param array<string, array<string>|string|null> $queryParams
+     * @param array<string, array<string>|string|null> $headers
+     * @param array<string, array<string>|string|null> $bodyParams
      * @throws RouteNotFoundInternalRequestException
      */
     public function request(
@@ -50,10 +52,12 @@ final class InternalRequestService
         array $urlParams = [],
         array $queryParams = [],
         array $headers = ['content-type' => 'application/json'],
+        array $bodyParams = [],
     ): Response {
-        $request = $this->buildRequest($routeName, $method, $urlParams, $queryParams, $headers);
+        $request = $this->buildRequest($routeName, $method, $urlParams, $queryParams, $headers, $bodyParams);
 
         if ($this->beforeRequest) {
+            Event::dispatch('internal_request.before', $request);
             \call_user_func($this->beforeRequest);
         }
 
@@ -61,6 +65,7 @@ final class InternalRequestService
             return $this->call($request);
         } finally {
             if ($this->afterRequest) {
+                Event::dispatch('internal_request.after', $request);
                 \call_user_func($this->afterRequest);
             }
         }
@@ -79,8 +84,9 @@ final class InternalRequestService
 
     /**
      * @param array<string, string> $urlParams
-     * @param array<string, string> $queryParams
-     * @param array<string, string> $headers
+     * @param array<string, array<string>|string|null> $queryParams
+     * @param array<string, array<string>|string|null> $headers
+     * @param array<string, array<string>|string|null> $bodyParams
      * @throws RouteNotFoundInternalRequestException
      */
     private function buildRequest(
@@ -88,7 +94,8 @@ final class InternalRequestService
         string $method,
         array $urlParams,
         array $queryParams,
-        array $headers
+        array $headers,
+        array $bodyParams,
     ): Request {
         try {
             $url = \route($routeName, $urlParams);
@@ -96,10 +103,9 @@ final class InternalRequestService
             throw new RouteNotFoundInternalRequestException($routeName);
         }
 
-        /**
-         * @var Request $request
-         */
-        $request = RequestFacade::create($url, $method, $queryParams);
+        $url .= '?' . \http_build_query($queryParams);
+
+        $request = Request::create($url, $method, $bodyParams);
 
         foreach ($headers as $key => $value) {
             $request->headers->set($key, $value);
