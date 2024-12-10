@@ -75,8 +75,14 @@ final class InternalRequestService
     {
         $response = App::handle($request);
 
-        if ($response->getStatusCode() !== Response::HTTP_OK) {
-            throw new HttpException($response->getStatusCode(), (string) $response->getContent());
+        if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
+            throw new HttpException(
+                $response->getStatusCode(),
+                $response->getContent() ?: Response::$statusTexts[$response->getStatusCode()] ?? 'Unknown error',
+                null,
+                [],
+                $response->getStatusCode(),
+            );
         }
 
         return $response;
