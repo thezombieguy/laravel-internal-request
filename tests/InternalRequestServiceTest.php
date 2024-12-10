@@ -9,6 +9,7 @@ use Faker\Generator;
 use Illuminate\Support\Facades\Route;
 use Orchestra\Testbench\TestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use TheZombieGuy\InternalRequest\Exceptions\RouteNotFoundInternalRequestException;
 use TheZombieGuy\InternalRequest\Services\InternalRequestService;
 
@@ -147,5 +148,59 @@ class InternalRequestServiceTest extends TestCase
 
         // Call the request method with a non-existent route
         $service->request('non.existent.route', 'GET');
+    }
+
+    public function testAllowsSuccessfulHttpStatusCodes(): void
+    {
+        Route::get('success-test', static function () {
+            return response('', 201); // Created
+        })->name('success.route');
+
+        $service = new InternalRequestService();
+
+        $response = $service->request('success.route', 'GET');
+
+        $this->assertEquals(201, $response->getStatusCode());
+    }
+
+    public function testAllowsSuccessfulHttpStatusCodesWithNoContent(): void
+    {
+        Route::get('no-content-test', static function () {
+            return response()->noContent() ;// Created
+        })->name('no-content.route');
+
+        $service = new InternalRequestService();
+
+        $response = $service->request('no-content.route', 'GET');
+
+        $this->assertEquals(204, $response->getStatusCode());
+    }
+
+    public function testThrowsExceptionForClientErrors(): void
+    {
+        Route::get('client-error-test', static function () {
+            return response('Not Found', 404); // Client error
+        })->name('client.error.route');
+
+        $service = new InternalRequestService();
+
+        $this->expectException(HttpException::class);
+        $this->expectExceptionCode(404);
+
+        $service->request('client.error.route', 'GET');
+    }
+
+    public function testThrowsExceptionForServerErrors(): void
+    {
+        Route::get('server-error-test', static function () {
+            return response('Internal Server Error', 500); // Server error
+        })->name('server.error.route');
+
+        $service = new InternalRequestService();
+
+        $this->expectException(HttpException::class);
+        $this->expectExceptionCode(500);
+
+        $service->request('server.error.route', 'GET');
     }
 }
