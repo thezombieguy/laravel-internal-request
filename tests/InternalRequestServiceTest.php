@@ -80,7 +80,10 @@ class InternalRequestServiceTest extends TestCase
 
         $urlParams = ['id' => $this->faker->uuid];
         $queryParams = ['foo' => $this->faker->word];
-        $headers = ['x-test-header' => $this->faker->word];
+        $headers = [
+            'Content-Type' => 'application/json',
+            'x-test-header' => $this->faker->word,
+        ];
         $bodyParams = ['bar' => $this->faker->word];
 
         $response = $service->request(
