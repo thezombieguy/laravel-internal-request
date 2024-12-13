@@ -6,6 +6,7 @@ namespace TheZombieGuy\InternalRequest\Services;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
+use JsonException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -44,7 +45,7 @@ final class InternalRequestService
      * @param array<string, array<string>|string|null> $queryParams
      * @param array<string, array<string>|string|null> $headers
      * @param array<string, array<string>|string|null> $bodyParams
-     * @throws RouteNotFoundInternalRequestException
+     * @throws RouteNotFoundInternalRequestException|JsonException
      */
     public function request(
         string $routeName,
@@ -93,7 +94,7 @@ final class InternalRequestService
      * @param array<string, array<string>|string|null> $queryParams
      * @param array<string, array<string>|string|null> $headers
      * @param array<string, array<string>|string|null> $bodyParams
-     * @throws RouteNotFoundInternalRequestException
+     * @throws RouteNotFoundInternalRequestException|JsonException
      */
     private function buildRequest(
         string $routeName,
@@ -111,10 +112,29 @@ final class InternalRequestService
 
         $url .= '?' . \http_build_query($queryParams);
 
-        $request = Request::create($url, $method, $bodyParams);
+        // Build default server parameters
+        $server = [
+            'REQUEST_METHOD' => $method,
+            'REQUEST_URI' => $url,
+            'CONTENT_TYPE' => $headers['Content-Type'] ?? 'application/json',
+            'HTTP_ACCEPT' => $headers['Accept'] ?? 'application/json',
+        ];
 
+        // Create the request
+        $request = Request::create(
+            uri: $url,
+            method: $method,
+            content: $method === 'GET' ? null : \json_encode($bodyParams, JSON_THROW_ON_ERROR)
+        );
+
+        // Set headers
         foreach ($headers as $key => $value) {
             $request->headers->set($key, $value);
+        }
+
+        // Populate server variables
+        foreach ($server as $key => $value) {
+            $request->server->set($key, $value);
         }
 
         return $request;
